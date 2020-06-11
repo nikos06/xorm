@@ -13,21 +13,22 @@ import (
 
 // Table represents a database table
 type Table struct {
-	Name          string
-	Type          reflect.Type
-	columnsSeq    []string
-	columnsMap    map[string][]*Column
-	columns       []*Column
-	Indexes       map[string]*Index
-	PrimaryKeys   []string
-	AutoIncrement string
-	Created       map[string]bool
-	Updated       string
-	Deleted       string
-	Version       string
-	StoreEngine   string
-	Charset       string
-	Comment       string
+	Name            string
+	Type            reflect.Type
+	columnsSeq      []string
+	columnsMap      map[string][]*Column
+	columns         []*Column
+	Indexes         map[string]*Index
+	PrimaryKeys     []string
+	AutoIncrement   string
+	Created         map[string]bool
+	Updated         string
+	Deleted         string
+	Version         string
+	StoreEngine     string
+	Charset         string
+	Comment         string
+	relationColumns []*Column
 }
 
 // NewEmptyTable creates an empty table
@@ -38,12 +39,13 @@ func NewEmptyTable() *Table {
 // NewTable creates a new Table object
 func NewTable(name string, t reflect.Type) *Table {
 	return &Table{Name: name, Type: t,
-		columnsSeq:  make([]string, 0),
-		columns:     make([]*Column, 0),
-		columnsMap:  make(map[string][]*Column),
-		Indexes:     make(map[string]*Index),
-		Created:     make(map[string]bool),
-		PrimaryKeys: make([]string, 0),
+		columnsSeq:      make([]string, 0),
+		columns:         make([]*Column, 0),
+		columnsMap:      make(map[string][]*Column),
+		Indexes:         make(map[string]*Index),
+		Created:         make(map[string]bool),
+		PrimaryKeys:     make([]string, 0),
+		relationColumns: make([]*Column, 0),
 	}
 }
 
@@ -113,6 +115,11 @@ func (table *Table) DeletedColumn() *Column {
 
 // AddColumn adds a column to table
 func (table *Table) AddColumn(col *Column) {
+	if col.Relation != nil {
+		table.relationColumns = append(table.relationColumns, col)
+		return
+	}
+
 	table.columnsSeq = append(table.columnsSeq, col.Name)
 	table.columns = append(table.columns, col)
 	colName := strings.ToLower(col.Name)
@@ -187,4 +194,8 @@ func (table *Table) IDOfV(rv reflect.Value) (PK, error) {
 		}
 	}
 	return PK(pk), nil
+}
+
+func (table *Table) RelationColumns() []*Column {
+	return table.relationColumns
 }

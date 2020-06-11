@@ -71,6 +71,7 @@ type Interface interface {
 	Update(bean interface{}, condiBeans ...interface{}) (int64, error)
 	UseBool(...string) *Session
 	Where(interface{}, ...interface{}) *Session
+	Preload(bool) *Session
 }
 
 // EngineInterface defines the interface which Engine, EngineGroup will implementate.

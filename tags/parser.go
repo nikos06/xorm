@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"xorm.io/xorm/relation"
 
 	"xorm.io/xorm/caches"
 	"xorm.io/xorm/convert"
@@ -226,6 +227,15 @@ func (parser *Parser) Parse(v reflect.Value) (*schemas.Table, error) {
 					}
 					if ctx.hasNoCacheTag {
 						hasNoCacheTag = true
+					}
+
+					if ctx.relationType != relation.None {
+						col.Relation = &relation.Relation{
+							Type:       ctx.relationType,
+							ForeignKey: ctx.foreignKey,
+							OwnerKey:   ctx.ownerKey,
+							TableName:  col.TableName,
+						}
 					}
 				}
 

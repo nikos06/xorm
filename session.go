@@ -17,6 +17,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"xorm.io/xorm/relation"
 
 	"xorm.io/xorm/contexts"
 	"xorm.io/xorm/convert"
@@ -86,6 +87,9 @@ type Session struct {
 
 	ctx         context.Context
 	sessionType sessionType
+
+	//relation
+	preLoad bool
 }
 
 func newSessionID() string {
@@ -135,6 +139,8 @@ func newSession(engine *Engine) *Session {
 		lastSQLArgs: make([]interface{}, 0),
 
 		sessionType: engineSession,
+
+		preLoad: true,
 	}
 	if engine.logSessionID {
 		session.ctx = context.WithValue(session.ctx, log.SessionKey, session)
@@ -909,4 +915,46 @@ func (session *Session) PingContext(ctx context.Context) error {
 
 	session.engine.logger.Infof("PING DATABASE %v", session.engine.DriverName())
 	return session.DB().PingContext(ctx)
+}
+
+func (session *Session) Preload(is bool) *Session {
+	session.preLoad = is
+	return session
+}
+
+func (session *Session) relationBean(dataStruct reflect.Value, table *schemas.Table) error {
+	pk, err := session.engine.idOfV(dataStruct)
+	if err != nil {
+		return err
+	}
+	if len(pk) != 1 {
+		return errors.New(`unsupported non or composited primary key cascade`)
+	}
+	for _, col := range table.RelationColumns() {
+		switch col.Relation.Type {
+		case relation.HasOne:
+			fv := dataStruct.FieldByName(col.FieldName)
+			switch fv.Kind() {
+			//if it is pointer of struct
+			case reflect.Ptr:
+				var bean reflect.Value
+				if fv.IsNil() {
+					bean = reflect.New(fv.Type().Elem())
+				} else {
+					bean = fv
+				}
+
+				foreignField := session.engine.GetColumnMapper().Obj2Table(table.Name + `Id`)
+
+				_, err = session.NoCascade().Table(col.Relation.TableName).Where(foreignField+`=?`, pk[0]).get(bean.Interface())
+				if err != nil {
+					return err
+				}
+				//if has {
+					fv.Set(bean)
+				//}
+			}
+		}
+	}
+	return nil
 }

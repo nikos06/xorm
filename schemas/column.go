@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xorm.io/xorm/relation"
 )
 
 const (
@@ -45,6 +46,8 @@ type Column struct {
 	DisableTimeZone bool
 	TimeZone        *time.Location // column specified time zone
 	Comment         string
+	//IsRelation      bool
+	Relation        *relation.Relation
 }
 
 // NewColumn creates a new column
