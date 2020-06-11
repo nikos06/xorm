@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-
 	"xorm.io/xorm/caches"
 	"xorm.io/xorm/internal/utils"
 	"xorm.io/xorm/schemas"
@@ -249,6 +248,13 @@ func (session *Session) nocacheGet(beanKind reflect.Kind, table *schemas.Table, 
 		_, err = session.slice2Bean(scanResults, fields, bean, &dataStruct, table)
 		if err != nil {
 			return true, err
+		}
+
+		if session.preLoad {
+			err = session.relationBean(dataStruct, table)
+			if err != nil {
+				return true, err
+			}
 		}
 
 		return true, session.executeProcessors()

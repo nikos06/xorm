@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"xorm.io/xorm/relation"
 
 	"xorm.io/xorm/schemas"
 )
@@ -49,6 +50,9 @@ type Context struct {
 	hasCacheTag     bool
 	hasNoCacheTag   bool
 	ignoreNext      bool
+	relationType    int
+	foreignKey      string
+	ownerKey        string
 }
 
 // Handler describes tag handler for XORM
@@ -57,25 +61,27 @@ type Handler func(ctx *Context) error
 var (
 	// defaultTagHandlers enumerates all the default tag handler
 	defaultTagHandlers = map[string]Handler{
-		"<-":       OnlyFromDBTagHandler,
-		"->":       OnlyToDBTagHandler,
-		"PK":       PKTagHandler,
-		"NULL":     NULLTagHandler,
-		"NOT":      IgnoreTagHandler,
-		"AUTOINCR": AutoIncrTagHandler,
-		"DEFAULT":  DefaultTagHandler,
-		"CREATED":  CreatedTagHandler,
-		"UPDATED":  UpdatedTagHandler,
-		"DELETED":  DeletedTagHandler,
-		"VERSION":  VersionTagHandler,
-		"UTC":      UTCTagHandler,
-		"LOCAL":    LocalTagHandler,
-		"NOTNULL":  NotNullTagHandler,
-		"INDEX":    IndexTagHandler,
-		"UNIQUE":   UniqueTagHandler,
-		"CACHE":    CacheTagHandler,
-		"NOCACHE":  NoCacheTagHandler,
-		"COMMENT":  CommentTagHandler,
+		"<-":          OnlyFromDBTagHandler,
+		"->":          OnlyToDBTagHandler,
+		"PK":          PKTagHandler,
+		"NULL":        NULLTagHandler,
+		"NOT":         IgnoreTagHandler,
+		"AUTOINCR":    AutoIncrTagHandler,
+		"DEFAULT":     DefaultTagHandler,
+		"CREATED":     CreatedTagHandler,
+		"UPDATED":     UpdatedTagHandler,
+		"DELETED":     DeletedTagHandler,
+		"VERSION":     VersionTagHandler,
+		"UTC":         UTCTagHandler,
+		"LOCAL":       LocalTagHandler,
+		"NOTNULL":     NotNullTagHandler,
+		"INDEX":       IndexTagHandler,
+		"UNIQUE":      UniqueTagHandler,
+		"CACHE":       CacheTagHandler,
+		"NOCACHE":     NoCacheTagHandler,
+		"COMMENT":     CommentTagHandler,
+		"HAS_ONE":     HasOneHandler,
+		"FOREIGN_KEY": ForeignKeyHandler,
 	}
 )
 
@@ -328,5 +334,15 @@ func NoCacheTagHandler(ctx *Context) error {
 	if !ctx.hasNoCacheTag {
 		ctx.hasNoCacheTag = true
 	}
+	return nil
+}
+
+func HasOneHandler(ctx *Context) error {
+	ctx.relationType = relation.HasOne
+
+	return nil
+}
+
+func ForeignKeyHandler(ctx *Context) error {
 	return nil
 }
