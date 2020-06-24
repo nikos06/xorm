@@ -139,3 +139,12 @@ func TestSetSchema(t *testing.T) {
 		assert.EqualValues(t, oldSchema, testEngine.Dialect().URI().Schema)
 	}
 }
+
+func TestDBVersion(t *testing.T) {
+	assert.NoError(t, PrepareEngine())
+
+	version, err := testEngine.DBVersion()
+	assert.NoError(t, err)
+
+	fmt.Println(testEngine.Dialect().URI().DBType, "version", version)
+}
