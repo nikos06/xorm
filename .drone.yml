@@ -173,11 +173,13 @@ steps:
 - name: test-pgx
   pull: default
   image: golang:1.12
+  depends_on:
+  - test-postgres-schema
   environment:
     GO111MODULE: "on"
     GOPROXY: "https://goproxy.cn"
     TEST_PGSQL_HOST: pgsql
-    TEST_PGSQL_DBNAME: pgx_test
+    TEST_PGSQL_DBNAME: xorm_test
     TEST_PGSQL_USERNAME: postgres
     TEST_PGSQL_PASSWORD: postgres
   commands:
@@ -199,7 +201,7 @@ steps:
     GOPROXY: "https://goproxy.cn"
     TEST_PGSQL_HOST: pgsql
     TEST_PGSQL_SCHEMA: xorm
-    TEST_PGSQL_DBNAME: pgx_test
+    TEST_PGSQL_DBNAME: xorm_test
     TEST_PGSQL_USERNAME: postgres
     TEST_PGSQL_PASSWORD: postgres
   commands:
