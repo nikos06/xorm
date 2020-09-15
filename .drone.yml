@@ -170,6 +170,47 @@ steps:
     - push
     - pull_request
 
+- name: test-pgx
+  pull: default
+  image: golang:1.12
+  environment:
+    GO111MODULE: "on"
+    GOPROXY: "https://goproxy.cn"
+    TEST_PGSQL_HOST: pgsql
+    TEST_PGSQL_DBNAME: pgx_test
+    TEST_PGSQL_USERNAME: postgres
+    TEST_PGSQL_PASSWORD: postgres
+  commands:
+  - make test-pgx
+  - TEST_CACHE_ENABLE=true make test-pgx
+  - TEST_QUOTE_POLICY=reserved make test-pgx
+  when:
+    event:
+    - push
+    - pull_request
+
+- name: test-pgx-schema
+  pull: default
+  image: golang:1.12
+  depends_on:
+  - test-pgx
+  environment:
+    GO111MODULE: "on"
+    GOPROXY: "https://goproxy.cn"
+    TEST_PGSQL_HOST: pgsql
+    TEST_PGSQL_SCHEMA: xorm
+    TEST_PGSQL_DBNAME: pgx_test
+    TEST_PGSQL_USERNAME: postgres
+    TEST_PGSQL_PASSWORD: postgres
+  commands:
+  - make test-pgx
+  - TEST_CACHE_ENABLE=true make test-pgx
+  - TEST_QUOTE_POLICY=reserved make test-pgx
+  when:
+    event:
+    - push
+    - pull_request
+
 - name: test-mssql
   pull: default
   image: golang:1.12
