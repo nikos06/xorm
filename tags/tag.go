@@ -225,37 +225,54 @@ func CommentTagHandler(ctx *Context) error {
 
 // SQLTypeTagHandler describes SQL Type tag handler
 func SQLTypeTagHandler(ctx *Context) error {
-	ctx.col.SQLType = schemas.SQLType{Name: ctx.tagName}
-	if len(ctx.params) > 0 {
-		if ctx.tagName == schemas.Enum {
-			ctx.col.EnumOptions = make(map[string]int)
-			for k, v := range ctx.params {
-				v = strings.TrimSpace(v)
-				v = strings.Trim(v, "'")
-				ctx.col.EnumOptions[v] = k
-			}
-		} else if ctx.tagName == schemas.Set {
-			ctx.col.SetOptions = make(map[string]int)
-			for k, v := range ctx.params {
-				v = strings.TrimSpace(v)
-				v = strings.Trim(v, "'")
-				ctx.col.SetOptions[v] = k
-			}
-		} else {
-			var err error
-			if len(ctx.params) == 2 {
-				ctx.col.Length, err = strconv.Atoi(ctx.params[0])
-				if err != nil {
-					return err
+	switch ctx.tagName {
+	case schemas.TinyIntUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "TINYINT UNSIGNED"}
+	case schemas.SmallIntUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "SMALLINT UNSIGNED"}
+	case schemas.MediumIntUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "MEDIUMINT UNSIGNED"}
+	case schemas.IntUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "INT UNSIGNED"}
+	case schemas.BigIntUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "BIGINT UNSIGNED"}
+	case schemas.FloatUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "FLOAT UNSIGNED"}
+	case schemas.DoubleUnsigned:
+		ctx.col.SQLType = schemas.SQLType{Name: "DOUBLE UNSIGNED"}
+	default:
+		ctx.col.SQLType = schemas.SQLType{Name: ctx.tagName}
+		if len(ctx.params) > 0 {
+			if ctx.tagName == schemas.Enum {
+				ctx.col.EnumOptions = make(map[string]int)
+				for k, v := range ctx.params {
+					v = strings.TrimSpace(v)
+					v = strings.Trim(v, "'")
+					ctx.col.EnumOptions[v] = k
 				}
-				ctx.col.Length2, err = strconv.Atoi(ctx.params[1])
-				if err != nil {
-					return err
+			} else if ctx.tagName == schemas.Set {
+				ctx.col.SetOptions = make(map[string]int)
+				for k, v := range ctx.params {
+					v = strings.TrimSpace(v)
+					v = strings.Trim(v, "'")
+					ctx.col.SetOptions[v] = k
 				}
-			} else if len(ctx.params) == 1 {
-				ctx.col.Length, err = strconv.Atoi(ctx.params[0])
-				if err != nil {
-					return err
+			} else {
+				var err error
+				if len(ctx.params) == 2 {
+					ctx.col.Length, err = strconv.Atoi(ctx.params[0])
+					if err != nil {
+						return err
+					}
+					ctx.col.Length2, err = strconv.Atoi(ctx.params[1])
+					if err != nil {
+						return err
+					}
+				} else if len(ctx.params) == 1 {
+					ctx.col.Length, err = strconv.Atoi(ctx.params[0])
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}

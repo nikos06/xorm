@@ -250,11 +250,9 @@ func (session *Session) Sync2(beans ...interface{}) error {
 		if err != nil {
 			return err
 		}
-		var tbName string
+		tbName := engine.TableName(bean)
 		if len(session.statement.AltTableName) > 0 {
 			tbName = session.statement.AltTableName
-		} else {
-			tbName = engine.TableName(bean)
 		}
 		tbNameWithSchema := engine.tbNameWithSchema(tbName)
 

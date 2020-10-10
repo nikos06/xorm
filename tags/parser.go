@@ -205,8 +205,6 @@ func (parser *Parser) Parse(v reflect.Value) (*schemas.Table, error) {
 					}
 					if j < len(tags)-1 {
 						ctx.nextTag = tags[j+1]
-					} else {
-						ctx.nextTag = ""
 					}
 
 					if h, ok := parser.handlers[ctx.tagName]; ok {

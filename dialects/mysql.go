@@ -354,26 +354,32 @@ func (db *mysql) GetColumns(queryer core.Queryer, ctx context.Context, tableName
 		cts := strings.Split(colType, "(")
 		colName := cts[0]
 		colType = strings.ToUpper(colName)
+		extra = strings.ToUpper(extra)
 		var len1, len2 int
 		if len(cts) == 2 {
 			idx := strings.Index(cts[1], ")")
-			if colType == schemas.Enum && cts[1][0] == '\'' { // enum
-				options := strings.Split(cts[1][0:idx], ",")
-				col.EnumOptions = make(map[string]int)
-				for k, v := range options {
-					v = strings.TrimSpace(v)
-					v = strings.Trim(v, "'")
-					col.EnumOptions[v] = k
+			switch colType {
+			case schemas.Enum:
+				if cts[1][0] == '\'' {
+					options := strings.Split(cts[1][0:idx], ",")
+					col.EnumOptions = make(map[string]int)
+					for k, v := range options {
+						v = strings.TrimSpace(v)
+						v = strings.Trim(v, "'")
+						col.EnumOptions[v] = k
+					}
 				}
-			} else if colType == schemas.Set && cts[1][0] == '\'' {
-				options := strings.Split(cts[1][0:idx], ",")
-				col.SetOptions = make(map[string]int)
-				for k, v := range options {
-					v = strings.TrimSpace(v)
-					v = strings.Trim(v, "'")
-					col.SetOptions[v] = k
+			case schemas.Set:
+				if cts[1][0] == '\'' {
+					options := strings.Split(cts[1][0:idx], ",")
+					col.SetOptions = make(map[string]int)
+					for k, v := range options {
+						v = strings.TrimSpace(v)
+						v = strings.Trim(v, "'")
+						col.SetOptions[v] = k
+					}
 				}
-			} else {
+			default:
 				lens := strings.Split(cts[1][0:idx], ",")
 				len1, err = strconv.Atoi(strings.TrimSpace(lens[0]))
 				if err != nil {
@@ -387,19 +393,30 @@ func (db *mysql) GetColumns(queryer core.Queryer, ctx context.Context, tableName
 				}
 			}
 		}
-		if colType == "FLOAT UNSIGNED" {
-			colType = "FLOAT"
+
+		switch colType {
+		case "TINYINT UNSIGNED":
+			colType = schemas.TinyIntUnsigned
+		case "SMALLINT UNSIGNED":
+			colType = schemas.SmallIntUnsigned
+		case "MEDIUMINT UNSIGNED":
+			colType = schemas.MediumIntUnsigned
+		case "INT UNSIGNED":
+			colType = schemas.IntUnsigned
+		case "BIGINT UNSIGNED":
+			colType = schemas.BigIntUnsigned
+		case "FLOAT UNSIGNED":
+			colType = schemas.FloatUnsigned
+		case "DOUBLE UNSIGNED":
+			colType = schemas.DoubleUnsigned
 		}
-		if colType == "DOUBLE UNSIGNED" {
-			colType = "DOUBLE"
-		}
+
 		col.Length = len1
 		col.Length2 = len2
-		if _, ok := schemas.SqlTypes[colType]; ok {
-			col.SQLType = schemas.SQLType{Name: colType, DefaultLength: len1, DefaultLength2: len2}
-		} else {
+		if _, ok := schemas.SqlTypes[colType]; !ok {
 			return nil, nil, fmt.Errorf("Unknown colType %v", colType)
 		}
+		col.SQLType = schemas.SQLType{Name: colType, DefaultLength: len1, DefaultLength2: len2}
 
 		if colKey == "PRI" {
 			col.IsPrimaryKey = true
@@ -408,7 +425,7 @@ func (db *mysql) GetColumns(queryer core.Queryer, ctx context.Context, tableName
 			// col.is
 		}
 
-		if extra == "auto_increment" {
+		if extra == "AUTO_INCREMENT" {
 			col.IsAutoIncrement = true
 		}
 

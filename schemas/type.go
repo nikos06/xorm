@@ -69,13 +69,18 @@ func (s *SQLType) IsJson() bool {
 }
 
 var (
-	Bit       = "BIT"
-	TinyInt   = "TINYINT"
-	SmallInt  = "SMALLINT"
-	MediumInt = "MEDIUMINT"
-	Int       = "INT"
-	Integer   = "INTEGER"
-	BigInt    = "BIGINT"
+	Bit               = "BIT"
+	TinyInt           = "TINYINT"
+	TinyIntUnsigned   = "TINYINT_UNSIGNED"
+	SmallInt          = "SMALLINT"
+	SmallIntUnsigned  = "SMALLINT_UNSIGNED"
+	MediumInt         = "MEDIUMINT"
+	MediumIntUnsigned = "MEDIUMINT_UNSIGNED"
+	Int               = "INT"
+	IntUnsigned       = "INT_UNSIGNED"
+	Integer           = "INTEGER"
+	BigInt            = "BIGINT"
+	BigIntUnsigned    = "BIGINT_UNSIGNED"
 
 	Enum = "ENUM"
 	Set  = "SET"
@@ -107,9 +112,11 @@ var (
 	Money      = "MONEY"
 	SmallMoney = "SMALLMONEY"
 
-	Real   = "REAL"
-	Float  = "FLOAT"
-	Double = "DOUBLE"
+	Real           = "REAL"
+	Float          = "FLOAT"
+	FloatUnsigned  = "FLOAT_UNSIGNED"
+	Double         = "DOUBLE"
+	DoubleUnsigned = "DOUBLE_UNSIGNED"
 
 	Binary     = "BINARY"
 	VarBinary  = "VARBINARY"
@@ -131,13 +138,18 @@ var (
 	Array = "ARRAY"
 
 	SqlTypes = map[string]int{
-		Bit:       NUMERIC_TYPE,
-		TinyInt:   NUMERIC_TYPE,
-		SmallInt:  NUMERIC_TYPE,
-		MediumInt: NUMERIC_TYPE,
-		Int:       NUMERIC_TYPE,
-		Integer:   NUMERIC_TYPE,
-		BigInt:    NUMERIC_TYPE,
+		Bit:               NUMERIC_TYPE,
+		TinyInt:           NUMERIC_TYPE,
+		TinyIntUnsigned:   NUMERIC_TYPE,
+		SmallInt:          NUMERIC_TYPE,
+		SmallIntUnsigned:  NUMERIC_TYPE,
+		MediumInt:         NUMERIC_TYPE,
+		MediumIntUnsigned: NUMERIC_TYPE,
+		Int:               NUMERIC_TYPE,
+		IntUnsigned:       NUMERIC_TYPE,
+		Integer:           NUMERIC_TYPE,
+		BigInt:            NUMERIC_TYPE,
+		BigIntUnsigned:    NUMERIC_TYPE,
 
 		Enum:  TEXT_TYPE,
 		Set:   TEXT_TYPE,
@@ -165,13 +177,15 @@ var (
 		SmallDateTime: TIME_TYPE,
 		Year:          TIME_TYPE,
 
-		Decimal:    NUMERIC_TYPE,
-		Numeric:    NUMERIC_TYPE,
-		Real:       NUMERIC_TYPE,
-		Float:      NUMERIC_TYPE,
-		Double:     NUMERIC_TYPE,
-		Money:      NUMERIC_TYPE,
-		SmallMoney: NUMERIC_TYPE,
+		Decimal:        NUMERIC_TYPE,
+		Numeric:        NUMERIC_TYPE,
+		Real:           NUMERIC_TYPE,
+		Float:          NUMERIC_TYPE,
+		FloatUnsigned:  NUMERIC_TYPE,
+		Double:         NUMERIC_TYPE,
+		DoubleUnsigned: NUMERIC_TYPE,
+		Money:          NUMERIC_TYPE,
+		SmallMoney:     NUMERIC_TYPE,
 
 		Binary:    BLOB_TYPE,
 		VarBinary: BLOB_TYPE,
