@@ -917,13 +917,8 @@ func (session *Session) PingContext(ctx context.Context) error {
 	return session.DB().PingContext(ctx)
 }
 
-func (session *Session) Preload(is bool) *Session {
-	session.preLoad = is
-	return session
-}
-
 func (session *Session) relationBean(dataStruct reflect.Value, table *schemas.Table) error {
-	pk, err := session.engine.idOfV(dataStruct)
+	pk, err := table.IDOfV(dataStruct)
 	if err != nil {
 		return err
 	}

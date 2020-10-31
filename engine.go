@@ -1313,10 +1313,3 @@ func (engine *Engine) Transaction(f func(*Session) (interface{}, error)) (interf
 
 	return result, nil
 }
-
-func (engine *Engine) Preload(is bool) *Session {
-	session := engine.NewSession()
-	defer session.Close()
-	session.preLoad = is
-	return session
-}

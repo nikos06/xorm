@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestHasOne(t *testing.T) {
+func TestGetHasOne(t *testing.T) {
 	err := PrepareEngine()
 	assert.NoError(t, err)
 
@@ -23,7 +23,7 @@ func TestHasOne(t *testing.T) {
 		Id    int64
 		Name  string
 		Dog *Dog `xorm:"has_one"`
-		Cat *Cat `xorm:"has_one"`
+		Cat Cat `xorm:"has_one"`
 	}
 
 	err = testEngine.Sync2(new(Master), new(Dog), new(Cat))
@@ -42,9 +42,14 @@ func TestHasOne(t *testing.T) {
 	_, err = testEngine.InsertOne(cat)
 	assert.NoError(t, err)
 
-	get := Master{}
-	_, err = testEngine.ID(master.Id).Get(&get)
+	assertMaster := Master{}
+	_, err = testEngine.ID(master.Id).Get(&assertMaster)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, get.Dog)
-	assert.NotEmpty(t, get.Cat)
+	assert.NotEmpty(t, assertMaster.Dog)
+	assert.NotEmpty(t, assertMaster.Cat)
+}
+
+
+func testGetHasMany(t *testing.T) {
+
 }
