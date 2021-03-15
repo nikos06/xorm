@@ -99,7 +99,8 @@ help:
 	@echo " - test-mysql        run integration tests for mysql"
 	@echo " - test-mssql        run integration tests for mssql"
 	@echo " - test-postgres     run integration tests for postgres"
-	@echo " - test-sqlite       run integration tests for sqlite"
+	@echo " - test-sqlite3      run integration tests for sqlite"
+	@echo " - test-sqlite       run integration tests for pure go sqlite"
 	@echo " - test-tidb         run integration tests for tidb"
 	@echo " - vet               examines Go source code and reports suspicious constructs"
 

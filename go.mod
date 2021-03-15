@@ -10,7 +10,6 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/ziutek/mymysql v1.5.4
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
-	modernc.org/sqlite v1.8.1
+	modernc.org/sqlite v1.10.1-0.20210314190707-798bbeb9bb84
 	xorm.io/builder v0.3.8
 )
